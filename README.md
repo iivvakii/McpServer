@@ -35,7 +35,7 @@ It provides a set of **mutation tools** for managing books and authors, along wi
 ## 📦 Clone the Project
 
 ```bash
-git clone https://github.com/iivvakii/McpServer
+git clone https://github.com/iivvakii/McpServer.git
 cd mcp-server
 ```
 
