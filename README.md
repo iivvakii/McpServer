@@ -1,65 +1,61 @@
 # 📘 MCP Server — Spring Boot + GraphQL + PostgreSQL + Docker
 
-**MCP Server** — це серверна частина, що реалізує **Model Context Protocol (MCP)** поверх **Spring Boot**, з підтримкою **GraphQL** і **PostgreSQL**.
-Він надає набір **mutation tools** для керування книгами та авторами, а також **GraphQL endpoint** для динамічного вибору полів при запитах.
+**MCP Server** is the backend component implementing the **Model Context Protocol (MCP)** on top of **Spring Boot**, with **GraphQL** and **PostgreSQL** support.
+It provides a set of **mutation tools** for managing books and authors, along with a **GraphQL endpoint** that allows dynamic field selection in queries.
 
 ---
 
-## 🧠 Архітектура
+## 🧠 Architecture
 
-
-
-* **LLM** (DeepSeek) взаємодіє через MCP Client.
-* **MCP Client** вирішує, який тул викликати.
-* **MCP Server** приймає запити, виконує операції (mutation) і GraphQL-запити.
-* **GraphQL** дозволяє отримувати лише потрібні поля.
-* **PostgreSQL** зберігає сутності `Book` та `Author`.
+* **LLM** (DeepSeek) communicates via the MCP Client.
+* **MCP Client** determines which tool should be executed.
+* **MCP Server** receives the request, performs mutations and executes GraphQL queries.
+* **GraphQL** enables fetching only the required fields.
+* **PostgreSQL** stores entities `Book` and `Author`.
 
 ---
 
-## ⚙️ Технологічний стек
+## ⚙️ Technology Stack
 
-| Компонент       | Технологія                   |
-| --------------- | ---------------------------- |
-| Мова            | Java 21                      |
-| Фреймворк       | Spring Boot 3.5.x            |
-| Протокол        | MCP (Model Context Protocol) |
-| API             | GraphQL                      |
-| Реактивність    | Spring WebFlux               |
-| ORM             | Spring Data JPA              |
-| База даних      | PostgreSQL 15                |
-| AI інтеграція   | Spring AI                    |
-| Збірка          | Maven                        |
-| Контейнеризація | Docker + Docker Compose      |
-
+| Component        | Technology                   |
+| ---------------- | ---------------------------- |
+| Language         | Java 21                      |
+| Framework        | Spring Boot 3.5.x            |
+| Protocol         | MCP (Model Context Protocol) |
+| API              | GraphQL                      |
+| Reactive Stack   | Spring WebFlux               |
+| ORM              | Spring Data JPA              |
+| Database         | PostgreSQL 15                |
+| AI Integration   | Spring AI                    |
+| Build Tool       | Maven                        |
+| Containerization | Docker + Docker Compose      |
 
 ---
 
-## 📦 Як клонувати проєкт
+## 📦 Clone the Project
 
 ```bash
-git clone https://github.com/your-username/mcp-server.git
+git clone https://github.com/iivvakii/McpServer
 cd mcp-server
 ```
 
 ---
 
-## 🚀 Способи запуску
+## 🚀 Run Options
 
-### 🔹 Варіант 1 — Локальний запуск (без Docker)
+### 🔹 Option 1 — Local Run (without Docker)
 
-#### 1️⃣ Вимоги
+#### 1️⃣ Requirements
 
 * **Java 21+**
 * **Maven 3.9+**
-* **PostgreSQL** встановлений локально
+* **PostgreSQL** installed locally
 
-#### 2️⃣ Налаштуй базу даних
+#### 2️⃣ Create a Database
 
-Створи БД PostgreSQL
+Create a PostgreSQL database manually or using a tool like pgAdmin.
 
-
-#### 3️⃣ Налаштуй `application.properties`
+#### 3️⃣ Configure `application.properties`
 
 `src/main/resources/application.properties`:
 
@@ -71,7 +67,7 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 ```
 
-#### 4️⃣ Збери та запусти застосунок
+#### 4️⃣ Build and Run the Application
 
 ```bash
 mvn clean package
@@ -80,31 +76,31 @@ java -jar target/McpServer-0.0.1-SNAPSHOT.jar
 
 ---
 
-### 🔹 Варіант 2 — Запуск через Docker Compose
+### 🔹 Option 2 — Run with Docker Compose
 
-#### 1️⃣ Збери jar-файл
+#### 1️⃣ Build the jar file
 
 ```bash
 mvn clean package -DskipTests
 ```
 
-#### 2️⃣ Запусти docker-compose
+#### 2️⃣ Start Docker Compose
 
 ```bash
 docker compose up --build
 ```
 
-#### 3️⃣ Перевір статус контейнерів
+#### 3️⃣ Check container status
 
 ```bash
 docker ps
 ```
 
-Очікувані сервіси:
+Expected services:
 
 ```
-postgres      → порт 5432
-mcp_server    → порт 8080
+postgres      → port 5432
+mcp_server    → port 8080
 ```
 
 ---
@@ -158,30 +154,35 @@ networks:
 
 ---
 
-## 🧩 Основні компоненти
+## 🧩 Core Components
 
-| Клас                                 | Призначення                                   |
-| ------------------------------------ | --------------------------------------------- |
-| `BookTools`                          | Тули для створення, оновлення, видалення книг |
-| `AuthorTools`                        | Тули для роботи з авторами                    |
-| `GraphQLTools`                       | Універсальний тул для GraphQL-запитів         |
-| `BookService`, `AuthorService`       | Бізнес-логіка                                 |
-| `BookController`, `AuthorController` | GraphQL контролери                            |
-| `McpServerApplication`               | Точка входу в застосунок                      |
+| Class                                | Description                                  |
+| ------------------------------------ | -------------------------------------------- |
+| `BookTools`                          | Tools for creating, updating, deleting books |
+| `AuthorTools`                        | Tools for managing authors                   |
+| `GraphQLTools`                       | Generic tool for executing GraphQL queries   |
+| `BookService`, `AuthorService`       | Business logic                               |
+| `BookController`, `AuthorController` | GraphQL controllers                          |
+| `McpServerApplication`               | Application entry point                      |
 
 ---
 
 ## 🧠 MCP Tools
 
-| Tool                                    | Опис                            |
-| --------------------------------------- | ------------------------------- |
-| `createBook(title, authorIds)`          | Створює нову книгу              |
-| `updateBook(bookId, newTitle)`          | Оновлює назву книги             |
-| `addAuthorsToBook(bookId, authorIds)`   | Додає авторів до книги          |
-| `deleteBook(bookId)`                    | Видаляє книгу                   |
-| `createAuthor(name, bookIds)`           | Створює автора                  |
-| `updateAuthor(authorId, newName)`       | Оновлює ім’я автора             |
-| `addBooksToAuthor(authorId, bookIds)`   | Прив’язує книги до автора       |
-| `deleteAuthor(authorId)`                | Видаляє автора                  |
-| `executeGraphQLQuery(query, variables)` | Виконує довільний GraphQL-запит |
+| Tool                                    | Description                         |
+| --------------------------------------- | ----------------------------------- |
+| `createBook(title, authorIds)`          | Creates a new book                  |
+| `updateBook(bookId, newTitle)`          | Updates a book title                |
+| `addAuthorsToBook(bookId, authorIds)`   | Adds authors to a book              |
+| `deleteBook(bookId)`                    | Deletes a book                      |
+| `createAuthor(name, bookIds)`           | Creates a new author                |
+| `updateAuthor(authorId, newName)`       | Updates an author's name            |
+| `addBooksToAuthor(authorId, bookIds)`   | Links books to an author            |
+| `deleteAuthor(authorId)`                | Deletes an author                   |
+| `executeGraphQLQuery(query, variables)` | Executes an arbitrary GraphQL query |
 
+---
+
+## 🧾 License
+
+MIT License © 2025
